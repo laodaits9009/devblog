@@ -2,10 +2,18 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
+import { AppContext } from 'next/app'
+import { getBlogs } from 'server/blogs'
+import { BlogPost } from '@/interface/blog'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+interface Props {
+  blogData: BlogPost[]
+}
+
+export default function Home({ blogData }: Props) {
+  // console.log({ blogData });
   return (
     <>
       <Head>
@@ -14,14 +22,62 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="w-full h-screen flex flex-col overflow-auto bg-zinc-600 font-poppins">
+      <main className="w-full h-screen flex flex-col overflow-auto bg-zinc-800 font-poppins">
         <section className="container mx-auto">
           <div className="mt-3 flex flex-col items-center">
             <h1 className="text-[3rem]">Welcome to devblog !!!</h1>
             <p>A full-stack blog</p>
           </div>
         </section>
+
+        <section className='container mx-auto flex flex-col gap-3 mt-8 mb-12'>
+          {
+
+            blogData && blogData.map(({ id, title, bodyText, tags, url }: BlogPost) => {
+              return (
+                <BlogCard key={id} title={title} bodyText={bodyText} tags={tags} url={url} />
+              );
+            })
+          }
+        </section>
       </main>
     </>
   )
+}
+
+const BlogCard: React.FC<BlogPost> = ({ id, title, bodyText, createdAt, author, tags, url }) => {
+
+  const previewText = bodyText?.substring(0, 150) + ' ...'
+  return (
+    <a href={url} target="_blank" rel="noreferrer" className='card px-4 py-2'>
+      <div>
+        <h3 className='font-medium text-2xl text-[#dfa612] py-2'>👉 {' '} {title}</h3>
+
+        <p className='py-3 font-light'>{previewText}</p>
+
+        <div className="tags flex items-center gap-2">
+          {
+            !!tags && tags.map((tag: string, index: number) => {
+              return (
+                <span key={index} className="tag text-sm border rounded-full py-1 px-2">
+                  {tag}
+                </span>
+              );
+            })
+          }
+        </div>
+      </div>
+    </a>
+  );
+}
+
+export async function getServerSideProps() {
+
+  const posts: BlogPost[] = await getBlogs();
+  // console.log('Posts::', posts)
+  return {
+    props: {
+      blogData: posts
+    }, // will be passed to the page component as props
+  }
 }
