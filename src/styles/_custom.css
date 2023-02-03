@@ -1,5 +1,7 @@
 
 .card {
+  width: 100%;
+  min-width: 480px;
   cursor: pointer;
   background-color: #262626;
   border-radius: 8px;

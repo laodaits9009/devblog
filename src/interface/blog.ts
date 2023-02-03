@@ -12,7 +12,7 @@ export interface BlogPost {
   title: string
   html?: string
   bodyText?: string
-  tags?: string[]
+  tags: string[]
   createdAt?: string
   updatedAt?: string
   author?: Author

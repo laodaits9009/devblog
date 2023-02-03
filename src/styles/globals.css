@@ -1,4 +1,5 @@
 @import '_font.css';
+@import "github-syntax-dark/lib/github-dark.css";
 
 @import 'tailwind/_base.css';
 @import 'tailwind/_components.css';
